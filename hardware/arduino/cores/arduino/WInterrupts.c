@@ -81,6 +81,40 @@ void attachInterrupt(uint8_t interruptNum, void (*userFunc)(void), int mode) {
       EICRB = (EICRB & ~((1 << ISC70) | (1 << ISC71))) | (mode << ISC70);
       EIMSK |= (1 << INT7);
       break;
+#elif defined(EICRA) && defined(EIMSK) && defined(PCICR) && defined(PCMSK0) && defined(PCMSK1) && defined(PCMSK2) && defined(PCMSK3)
+    case 0: // INT0
+      EICRA = (EICRA & ~((1 << ISC00) | (1 << ISC01))) | (mode << ISC00);
+      EIMSK |= (1 << INT0);
+      break;
+    case 1: // INT1
+      EICRA = (EICRA & ~((1 << ISC10) | (1 << ISC11))) | (mode << ISC10);
+      EIMSK |= (1 << INT1);
+      break;
+    case 2: // INT2
+      EICRA = (EICRA & ~((1 << ISC20) | (1 << ISC21))) | (mode << ISC20);
+      EIMSK |= (1 << INT2);
+      break;
+      // TODO: this is pretty crumb644-specific. if i ever plan to push this upstream,
+      // i have to refactor this. this whole pcint  stuff could probably deserve its own
+      // function/file
+    case 3: // PCIE0
+      PCMSK0 = 1 << PCINT0;
+      PCICR |= (1 << PCIE0);
+      break;
+    case 4: // PCIE1
+      PCMSK1 = 1 << PCINT8;
+      PCICR |= (1 << PCIE1);
+      break;
+    case 5: // PCIE2
+      PCMSK2 = 1 << PCINT18; // PC2
+      PCICR |= (1 << PCIE2);
+      break;
+    case 6: // PCIE3
+      PCMSK3 = 1 << PCINT26; // PD2
+      PCICR |= (1 << PCIE3);
+      break;
+
+
 #else
     case 0:
     #if defined(EICRA) && defined(ISC00) && defined(EIMSK)
@@ -160,6 +194,8 @@ void detachInterrupt(uint8_t interruptNum) {
     #endif
       break;
 
+     // TODO: detachInterrupt not implemented on Atmega644
+
     case 1:
     #if defined(EIMSK) && defined(INT1)
       EIMSK &= ~(1 << INT1);
@@ -224,6 +260,43 @@ SIGNAL(INT6_vect) {
 SIGNAL(INT7_vect) {
   if(intFunc[EXTERNAL_INT_7])
     intFunc[EXTERNAL_INT_7]();
+}
+
+#elif defined(PCICR) && defined(EICRA)
+
+SIGNAL(INT0_vect) {
+  if(intFunc[EXTERNAL_INT_0])
+    intFunc[EXTERNAL_INT_0]();
+}
+
+SIGNAL(INT1_vect) {
+  if(intFunc[EXTERNAL_INT_1])
+    intFunc[EXTERNAL_INT_1]();
+}
+
+SIGNAL(INT2_vect) {
+  if(intFunc[EXTERNAL_INT_2])
+    intFunc[EXTERNAL_INT_2]();
+}
+
+SIGNAL(PCINT0_vect) {
+  if(intFunc[EXTERNAL_INT_3])
+    intFunc[EXTERNAL_INT_3]();
+}
+
+SIGNAL(PCINT1_vect) {
+  if(intFunc[EXTERNAL_INT_4])
+    intFunc[EXTERNAL_INT_4]();
+}
+
+SIGNAL(PCINT2_vect) {
+  if(intFunc[EXTERNAL_INT_5])
+    intFunc[EXTERNAL_INT_5]();
+}
+
+SIGNAL(PCINT3_vect) {
+  if(intFunc[EXTERNAL_INT_6])
+    intFunc[EXTERNAL_INT_6]();
 }
 
 #else
