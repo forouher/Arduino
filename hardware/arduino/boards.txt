@@ -336,3 +336,23 @@ atmega8.build.mcu=atmega8
 atmega8.build.f_cpu=16000000L
 atmega8.build.core=arduino
 
+##############################################################
+
+atmega644.name=Crumb644 board (chip45.com)
+
+atmega644.upload.protocol=avrispmkii
+atmega644.upload.maximum_size=60000
+atmega644.upload.speed=0
+
+atmega644.bootloader.low_fuses=0xD7
+atmega644.bootloader.high_fuses=0xDC
+atmega644.bootloader.extended_fuses=0xFC
+atmega644.bootloader.path=atmega
+atmega644.bootloader.file=ATmegaBOOT_644_atmega644.hex
+atmega644.bootloader.unlock_bits=0x3F
+atmega644.bootloader.lock_bits=0x0F
+
+atmega644.build.mcu=atmega644p
+atmega644.build.f_cpu=16000000L
+atmega644.build.core=arduino
+
